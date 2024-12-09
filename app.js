@@ -30,11 +30,24 @@ const updateTask = (taskIndex, newDescription) => {
     writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
 }
 
+const markTask = (taskIndex, action) => {
+    if (action === 'mark-in-progress') {
+        taskList.tasks[taskIndex].status = Status.IN_PROGRESS;
+    } else {
+        taskList.tasks[taskIndex].status = Status.DONE;
+    }
+    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
+}
+
+const deleteTask = (taskIndex) => {
+    taskList.tasks.splice(taskIndex, 1);
+    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
+}
+
 if (process.argv.length < 3 && process.argv.length > 5) {
     console.trace('Invalid program arguments');
     process.exit(1);
 }
-
 if (!existsSync('tasks.json')) {
     writeFileSync('tasks.json', JSON.stringify((taskList)), undefined, 4);
 }
@@ -50,8 +63,7 @@ if (action === 'add') {
         process.exit(1);
     }
     addTask();
-}
-if (action === 'list') {
+} else if (action === 'list') {
     let whichTasks = process.argv[3];
     if (whichTasks === undefined) {
         let tasksJson = JSON.parse(readFileSync('tasks.json'));
@@ -66,8 +78,7 @@ if (action === 'list') {
         });
         console.log(taskList.tasks);
     }
-}
-if (action === 'update') {
+} else {
     let tasksJson = JSON.parse(readFileSync('tasks.json'));
     tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
     let taskCount = taskList.tasks.length;
@@ -75,73 +86,48 @@ if (action === 'update') {
     if (taskCount === 0) {
         console.trace('The list is empty');
         process.exit(1);
-    }
+    }   
+
+    if (action === 'update') {
+        if (process.argv[3] === undefined) {
+            console.trace('This action requires a task number to update');
+            process.exit(1);
+        } else if (process.argv[3] < 1 && process.argv[3] > taskCount) {
+            console.trace('This action requires an index in bounds of the existing list of tasks');
+            process.exit(1);
+        }
+        if (process.argv[4] === undefined) {
+            console.log(process.argv[4]);
+            console.trace('This action requires a new description after selecting a task by index to update');
+            process.exit(1);
+        }
     
-    if (process.argv[3] === undefined) {
-        console.trace('This action requires a task number to update');
-        process.exit(1);
-    } else if (process.argv[3] < 1 && process.argv[3] > taskCount) {
-        console.trace('This action requires an index in bounds of the existing list of tasks');
-        process.exit(1);
+        let taskIndex = process.argv[3]-1;
+        let newDescription = process.argv[4];
+        updateTask(taskIndex, newDescription);
+    } else if (action === 'mark-in-progress' || action === 'mark-done') {
+        if (process.argv[3] === undefined) {
+            console.trace('This action requires a task number to update');
+            process.exit(1);
+        } else if (process.argv[3] < 1 || process.argv[3] > taskCount) {
+            console.trace('This action requires an index in bounds of the existing list of tasks');
+            process.exit(1);
+        }
+    
+        let taskIndex = process.argv[3]-1;
+        markTask(taskIndex, action);
+    } else if (action === 'delete') {
+        if (process.argv[3] === undefined) {
+            console.trace('This action requires a task number to delete');
+            process.exit(1);
+        } else if (process.argv[3] < 1 || process.argv[3] > taskCount) {
+            console.trace('This action requires an index in bounds of the existing list of tasks');
+            process.exit(1);
+        }
+
+        let taskIndex = process.argv[3]-1;
+        deleteTask(taskIndex);
     }
-
-    if (process.argv[4] === undefined) {
-        console.log(process.argv[4]);
-        console.trace('This action requires a new description after selecting a task by index to update');
-        process.exit(1);
-    }
-
-    let taskIndex = process.argv[3]-1;
-    let newDescription = process.argv[4];
-    updateTask(taskIndex, newDescription);
-}
-if (action === 'mark-in-progress' || action === 'mark-done') {
-    let tasksJson = JSON.parse(readFileSync('tasks.json'));
-    tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
-    let taskCount = taskList.tasks.length;
-
-    if (taskCount === 0) {
-        console.trace('The list is empty');
-        process.exit(1);
-    }
-
-    if (process.argv[3] === undefined) {
-        console.trace('This action requires a task number to update');
-        process.exit(1);
-    } else if (process.argv[3] < 1 || process.argv[3] > taskCount) {
-        console.trace('This action requires an index in bounds of the existing list of tasks');
-        process.exit(1);
-    }
-
-    let taskIndex = process.argv[3]-1;
-    if (action === 'mark-in-progress') {
-        taskList.tasks[taskIndex].status = Status.IN_PROGRESS;
-    } else {
-        taskList.tasks[taskIndex].status = Status.DONE;
-    }
-    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
-}
-if (action === 'delete') {
-    let tasksJson = JSON.parse(readFileSync('tasks.json'));
-    tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
-    let taskCount = taskList.tasks.length;
-
-    if (taskCount === 0) {
-        console.trace('The list is empty');
-        process.exit(1);
-    }
-
-    if (process.argv[3] === undefined) {
-        console.trace('This action requires a task number to delete');
-        process.exit(1);
-    } else if (process.argv[3] < 1 || process.argv[3] > taskCount) {
-        console.trace('This action requires an index in bounds of the existing list of tasks');
-        process.exit(1);
-    }
-
-    let taskIndex = process.argv[3]-1;
-    taskList.tasks.splice(taskIndex, 1);
-    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
 }
 
-export default { addTask, updateTask, Status };
+export default { addTask, updateTask, markTask, deleteTask, Status };
