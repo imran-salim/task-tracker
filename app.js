@@ -108,7 +108,7 @@ if (action === 'mark-in-progress' || action === 'mark-done') {
     if (process.argv[3] === undefined) {
         console.trace('This action requires a task number to update');
         process.exit(1);
-    } else if (process.argv[3] < 1 && process.argv[4] > taskCount) {
+    } else if (process.argv[3] < 1 || process.argv[3] > taskCount) {
         console.trace('This action requires an index in bounds of the existing list of tasks');
         process.exit(1);
     }
