@@ -124,7 +124,26 @@ if (action === 'mark-in-progress' || action === 'mark-done') {
     writeFileSync('tasks.json', JSON.stringify((tasksJson), undefined, 4));
 }
 if (action === 'delete') {
+    let tasksJson = JSON.parse(readFileSync('tasks.json'));
+    tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
+    let taskCount = taskList.tasks.length;
 
+    if (taskCount === 0) {
+        console.trace('The list is empty');
+        process.exit(1);
+    }
+
+    if (process.argv[3] === undefined) {
+        console.trace('This action requires a task number to delete');
+        process.exit(1);
+    } else if (process.argv[3] < 1 || process.argv[3] > taskCount) {
+        console.trace('This action requires an index in bounds of the existing list of tasks');
+        process.exit(1);
+    }
+
+    let taskIndex = process.argv[3]-1;
+    taskList.tasks.splice(taskIndex, 1);
+    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
 }
 
 export default { addTask, updateTask, Status };
