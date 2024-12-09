@@ -109,7 +109,7 @@ if (action === 'add') {
         updateTask(taskIndex, newDescription);
     } else {
         if (process.argv[4] !== undefined) {
-            console.trace('No further argument given a task number');
+            console.trace('No further argument is required given a task number');
             process.exit(1);
         }
         if (action === 'mark-in-progress' || action === 'mark-done') {
