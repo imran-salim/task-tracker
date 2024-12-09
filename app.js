@@ -71,6 +71,11 @@ if (action === 'update') {
     let tasksJson = JSON.parse(readFileSync('tasks.json'));
     tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
     let taskCount = taskList.tasks.length;
+
+    if (taskCount === 0) {
+        console.trace('The list is empty');
+        process.exit(1);
+    }
     
     if (process.argv[3] === undefined) {
         console.trace('This action requires a task number to update');
@@ -95,6 +100,11 @@ if (action === 'mark-in-progress' || action === 'mark-done') {
     tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
     let taskCount = taskList.tasks.length;
 
+    if (taskCount === 0) {
+        console.trace('The list is empty');
+        process.exit(1);
+    }
+
     if (process.argv[3] === undefined) {
         console.trace('This action requires a task number to update');
         process.exit(1);
@@ -114,7 +124,7 @@ if (action === 'mark-in-progress' || action === 'mark-done') {
     writeFileSync('tasks.json', JSON.stringify((tasksJson), undefined, 4));
 }
 if (action === 'delete') {
-    
+
 }
 
 export default { addTask, updateTask, Status };
