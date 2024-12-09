@@ -114,14 +114,12 @@ if (action === 'mark-in-progress' || action === 'mark-done') {
     }
 
     let taskIndex = process.argv[3]-1;
-    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
-    tasksJson = JSON.parse(readFileSync('tasks.json'));
     if (action === 'mark-in-progress') {
-        tasksJson.tasks[taskIndex].status = Status.IN_PROGRESS;
+        taskList.tasks[taskIndex].status = Status.IN_PROGRESS;
     } else {
-        tasksJson.tasks[taskIndex].status = Status.DONE;
+        taskList.tasks[taskIndex].status = Status.DONE;
     }
-    writeFileSync('tasks.json', JSON.stringify((tasksJson), undefined, 4));
+    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
 }
 if (action === 'delete') {
     let tasksJson = JSON.parse(readFileSync('tasks.json'));
