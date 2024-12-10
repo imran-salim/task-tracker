@@ -1,5 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs';
 
+const resetTaskFile = () => {
+    let taskList = {
+        tasks: []
+    };
+    writeFileSync('tasks.json', JSON.stringify(taskList, undefined, 4));
+}
+
 test('a list of one task is emptied', () => {
     const newTask = {
         id: crypto.randomUUID(),
@@ -17,6 +24,7 @@ test('a list of one task is emptied', () => {
     tasksJson.tasks.splice(0, 1);
     writeFileSync('tasks.json', JSON.stringify((tasksJson), undefined, 4));
     expect(tasksJson).not.toEqual(taskList);
+    resetTaskFile();
 });
 
 test('a list of two tasks has its second task deleted', () => {
@@ -45,4 +53,5 @@ test('a list of two tasks has its second task deleted', () => {
     writeFileSync('tasks.json', JSON.stringify((tasksJson), undefined, 4));
     expect(tasksJson).not.toEqual(taskList);
     expect(tasksJson.tasks[0]).toEqual(taskList.tasks[0]);
+    resetTaskFile();
 });

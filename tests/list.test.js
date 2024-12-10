@@ -1,5 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs';
 
+const resetTaskFile = () => {
+    let taskList = {
+        tasks: []
+    };
+    writeFileSync('tasks.json', JSON.stringify(taskList, undefined, 4));
+}
+
 test('an empty list is printed', () => {
     let taskList = {
         tasks: []
@@ -32,6 +39,7 @@ test('a list of two tasks is printed', () => {
     writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
     let tasksJson = JSON.parse(readFileSync('tasks.json'));
     expect(taskList).toEqual(tasksJson);
+    resetTaskFile();
 });
 
 test('a list of todo tasks is printed', () => {
@@ -73,6 +81,7 @@ test('a list of todo tasks is printed', () => {
         }
     });
     expect(taskList.tasks[0]).toEqual(thirdTask);
+    resetTaskFile();
 });
 
 test('a list of in-progress tasks is printed', () => {
@@ -114,6 +123,7 @@ test('a list of in-progress tasks is printed', () => {
         }
     });
     expect(taskList.tasks[0]).toEqual(secondTask);
+    resetTaskFile();
 });
 
 test('a list of done tasks is printed', () => {
@@ -155,4 +165,5 @@ test('a list of done tasks is printed', () => {
         }
     });
     expect(taskList.tasks[0]).toEqual(firstTask);
+    resetTaskFile();
 });

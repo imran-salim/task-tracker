@@ -1,5 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs';
 
+const resetTaskFile = () => {
+    let taskList = {
+        tasks: []
+    };
+    writeFileSync('tasks.json', JSON.stringify(taskList, undefined, 4));
+}
+
 test('a todo task is marked as in-progress', () => {
     const newTask = {
         id: crypto.randomUUID(),
@@ -17,6 +24,7 @@ test('a todo task is marked as in-progress', () => {
     let tasksJson = JSON.parse(readFileSync('tasks.json'));
     tasksJson.tasks[0].status = 'in-progress';
     expect(oldStatus).not.toBe(tasksJson.tasks[0].status);
+    resetTaskFile();
 });
 
 test('a in-progress task is marked as done', () => {
@@ -36,6 +44,7 @@ test('a in-progress task is marked as done', () => {
     let tasksJson = JSON.parse(readFileSync('tasks.json'));
     tasksJson.tasks[0].status = 'done';
     expect(oldStatus).not.toBe(tasksJson.tasks[0].status);
+    resetTaskFile();
 });
 
 test('a todo task is marked as done', () => {
@@ -55,4 +64,5 @@ test('a todo task is marked as done', () => {
     let tasksJson = JSON.parse(readFileSync('tasks.json'));
     tasksJson.tasks[0].status = 'done';
     expect(oldStatus).not.toBe(tasksJson.tasks[0].status);
+    resetTaskFile();
 });

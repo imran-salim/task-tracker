@@ -1,5 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs';
 
+const resetTaskFile = () => {
+    let taskList = {
+        tasks: []
+    };
+    writeFileSync('tasks.json', JSON.stringify(taskList, undefined, 4));
+}
+
 test('a task is added to an empty list', () => {
     const newTask = {
         id: crypto.randomUUID(),
@@ -16,6 +23,7 @@ test('a task is added to an empty list', () => {
     let taskJson = JSON.parse(readFileSync('tasks.json'));
     expect(taskJson.tasks.length).toBe(1);
     expect(taskJson.tasks[0]).toEqual(newTask);
+    resetTaskFile();
 });
 
 test('a task is added to a list of one tasks', () => {
@@ -43,4 +51,5 @@ test('a task is added to a list of one tasks', () => {
     expect(tasksJson.tasks.length).toBe(2);
     expect(tasksJson.tasks[0]).toEqual(firstTask);
     expect(tasksJson.tasks[1]).toEqual(secondTask);
+    resetTaskFile();
 });

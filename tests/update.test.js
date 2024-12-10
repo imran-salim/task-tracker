@@ -1,5 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs';
 
+const resetTaskFile = () => {
+    let taskList = {
+        tasks: []
+    };
+    writeFileSync('tasks.json', JSON.stringify(taskList, undefined, 4));
+}
+
 test('the only task in the list is updated', () => {
     const newTask = {
         id: crypto.randomUUID(),
@@ -23,4 +30,5 @@ test('the only task in the list is updated', () => {
     let tasksJson = JSON.parse(readFileSync('tasks.json'));
     expect(tasksJson.tasks[0].description).not.toEqual(oldDescription);
     expect(tasksJson.tasks[0].updatedAt).not.toBe(oldUpdatedAt);
+    resetTaskFile();
 });
