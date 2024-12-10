@@ -10,7 +10,7 @@ let taskList = {
     tasks: []
 };
 
-const addTask = () => {
+const addTask = (tasksJson) => {
     const newTask = {
         id: crypto.randomUUID(),
         description: process.argv[3],
@@ -18,7 +18,6 @@ const addTask = () => {
         createdAt: Date.now(),
         updatedAt: Date.now()
     };
-    let tasksJson = JSON.parse(readFileSync('tasks.json'));
     tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
     taskList.tasks.push((newTask));
     writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
@@ -53,6 +52,7 @@ if (!existsSync('tasks.json')) {
 }
 
 let action = process.argv[2];
+let tasksJson = JSON.parse(readFileSync('tasks.json'));
 if (action === 'add') {
     if (process.argv[3] === undefined) {
         console.trace('This action requires a description to add to the list');
@@ -62,24 +62,21 @@ if (action === 'add') {
         console.trace('No further argument is required given a description');
         process.exit(1);
     }
-    addTask();
+    addTask(tasksJson);
 } else if (action === 'list') {
     let whichTasks = process.argv[3];
     if (whichTasks === undefined) {
-        let tasksJson = JSON.parse(readFileSync('tasks.json'));
         tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
         console.log(taskList.tasks);
     } else if (whichTasks === 'todo' || whichTasks === 'in-progress' || whichTasks === 'done') {
-        let tasksJson = JSON.parse(readFileSync('tasks.json'));
         tasksJson.tasks.forEach((task) => {
             if (task.status === whichTasks) {
-                taskList.tasks.push(task)
+                taskList.tasks.push(task);
             }
         });
         console.log(taskList.tasks);
     }
 } else {
-    let tasksJson = JSON.parse(readFileSync('tasks.json'));
     tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
     let taskCount = taskList.tasks.length;
     if (taskCount === 0) {
