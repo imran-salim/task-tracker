@@ -54,7 +54,7 @@ if (!existsSync('tasks.json')) {
 let action = process.argv[2];
 let tasksJson = JSON.parse(readFileSync('tasks.json'));
 if (action === 'add') {
-    if (process.argv[3] === undefined) {
+    if (!process.argv[3]) {
         console.trace('This action requires a description to add to the list');
         process.exit(1);
     }
@@ -65,7 +65,7 @@ if (action === 'add') {
     addTask(tasksJson);
 } else if (action === 'list') {
     let whichTasks = process.argv[3];
-    if (whichTasks === undefined) {
+    if (!whichTasks) {
         tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
         console.log(taskList.tasks);
     } else if (whichTasks === 'todo' || whichTasks === 'in-progress' || whichTasks === 'done') {
@@ -83,7 +83,7 @@ if (action === 'add') {
         console.trace('The list is empty');
         process.exit(1);
     }
-    if (process.argv[3] === undefined) {
+    if (!process.argv[3]) {
         console.trace('This action requires a task number');
         process.exit(1);
     }
@@ -94,7 +94,7 @@ if (action === 'add') {
 
     let taskIndex = process.argv[3]-1;
     if (action === 'update') {
-        if (process.argv[4] === undefined) {
+        if (!process.argv[4]) {
             console.trace('This action requires a new description after selecting a task number to update');
             process.exit(1);
         }
