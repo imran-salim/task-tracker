@@ -1,47 +1,9 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
-
-const Status = Object.freeze({
-    TODO: 'todo',
-    IN_PROGRESS: 'in-progress',
-    DONE: 'done'
-});
+import { addTask, updateTask, markTask, deleteTask } from './actions.js'
 
 let taskList = {
     tasks: []
 };
-
-const addTask = (tasksJson) => {
-    const newTask = {
-        id: crypto.randomUUID(),
-        description: process.argv[3],
-        status: Status.TODO,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-    };
-    tasksJson.tasks.forEach((task) =>  taskList.tasks.push(task));
-    taskList.tasks.push((newTask));
-    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
-}
-
-const updateTask = (taskIndex, newDescription) => {
-    taskList.tasks[taskIndex].description = newDescription;
-    taskList.tasks[taskIndex].updatedAt = Date.now();
-    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
-}
-
-const markTask = (taskIndex, action) => {
-    if (action === 'mark-in-progress') {
-        taskList.tasks[taskIndex].status = Status.IN_PROGRESS;
-    } else {
-        taskList.tasks[taskIndex].status = Status.DONE;
-    }
-    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
-}
-
-const deleteTask = (taskIndex) => {
-    taskList.tasks.splice(taskIndex, 1);
-    writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
-}
 
 if (process.argv.length < 3 && process.argv.length > 5) {
     console.trace('Invalid program arguments');
@@ -62,7 +24,7 @@ if (action === 'add') {
         console.trace('No further argument is required given a description');
         process.exit(1);
     }
-    addTask(tasksJson);
+    addTask(tasksJson, taskList);
 } else if (action === 'list') {
     let whichTasks = process.argv[3];
     if (!whichTasks) {
@@ -94,7 +56,8 @@ if (action === 'add') {
 
     let taskIndex = process.argv[3]-1;
     if (action === 'update') {
-        if (!process.argv[4]) {
+        let newDescription = process.argv[4];
+        if (!newDescription) {
             console.trace('This action requires a new description after selecting a task number to update');
             process.exit(1);
         }
@@ -102,19 +65,16 @@ if (action === 'add') {
             console.trace('No further argument is required given a description');
             process.exit(1);
         }
-        let newDescription = process.argv[4];
-        updateTask(taskIndex, newDescription);
+        updateTask(taskIndex, newDescription, taskList);
     } else {
         if (process.argv[4] !== undefined) {
             console.trace('No further argument is required given a task number');
             process.exit(1);
         }
         if (action === 'mark-in-progress' || action === 'mark-done') {
-            markTask(taskIndex, action);
+            markTask(taskIndex, action, taskList);
         } else if (action === 'delete') {
-            deleteTask(taskIndex);
+            deleteTask(taskIndex, taskList);
         }
     }
 }
-
-export default { addTask, updateTask, markTask, deleteTask, Status };
