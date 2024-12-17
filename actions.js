@@ -28,7 +28,7 @@ const updateTask = (taskIndex, newDescription, taskList) => {
 const markTask = (taskIndex, action, taskList) => {
     if (action === 'mark-in-progress') {
         taskList.tasks[taskIndex].status = Status.IN_PROGRESS;
-    } else {
+    } else if (action === 'mark-done') {
         taskList.tasks[taskIndex].status = Status.DONE;
     }
     writeFileSync('tasks.json', JSON.stringify((taskList), undefined, 4));
