@@ -17,7 +17,7 @@ Both implementations support the same commands:
 
 ## JavaScript (`js/`)
 
-The more complete implementation. Tasks are persisted to a `tasks.json` file in the working directory, which is created automatically on first run. Each task has a UUID, a description, a status and created/updated timestamps. `update`, `delete` and the `mark-*` commands take the task's position in the list (starting at 1).
+Tasks are persisted to a `tasks.json` file in the working directory, which is created automatically on first run. Each task has a UUID, a description, a status and created/updated timestamps. `update`, `delete` and the `mark-*` commands take the task's position in the list (starting at 1).
 
 Requires Node.js. Run it from the `js` directory:
 
@@ -42,7 +42,7 @@ npm test
 
 ## Python (`py/`)
 
-A first pass, and unfinished. Tasks are held in memory only (seeded with sample data) and are lost when the program exits, so it's mainly useful for trying out the command parsing. Some invalid commands fail without an error message. JSON file storage is next, then SQLite.
+Tasks are persisted to a `tasks.json` file in the working directory, which is created automatically on first run. Each task has an integer id, a description, a status and created/updated timestamps. `update`, `delete` and the `mark-*` commands take the task's id.
 
 Requires Python 3. Run it from the `py` directory:
 
@@ -56,7 +56,9 @@ python task-cli.py list
 python task-cli.py list done
 ```
 
-Tasks are numbered with incrementing integer ids. Ids are never reused, so deleting a task leaves a gap in the numbering.
+Ids are never reused, so deleting a task leaves a gap in the numbering.
+
+Next: replace the JSON file with a SQLite database.
 
 ## License
 
