@@ -15,3 +15,13 @@ class Task:
     def update_description(self, new_description):
         self.description = new_description
         self.updated_at = datetime.now()
+
+    def to_json(self):
+        data = {
+            "id": self.id,
+            "description": self.description,
+            "status": self.status,
+            "createdAt": self.created_at.isoformat(),
+            "updatedAt": self.updated_at.isoformat()
+        }
+        return data
