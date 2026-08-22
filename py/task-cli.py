@@ -22,13 +22,11 @@ USAGE = """
 
 
 def list_tasks(tasks, status=""):
-    if not status:
-        for x in tasks:
+    for x in tasks:
+        if not status:
             print(x)
-    else:
-        for x in tasks:
-            if x["status"] == status:
-                print(x)
+        elif x["status"] == status:
+            print(x)
 
 def next_id(tasks):
     if not tasks:
@@ -37,15 +35,21 @@ def next_id(tasks):
     last_id = max(ids)
     return last_id + 1
 
+def write_to_json_file(file_path, data):
+    with open(file_path, "w", encoding="utf-8") as file:
+        dump(data, file, indent=4)
+
+def load_json_file(file_path):
+    with open(file_path, "r", encoding="utf-8") as file:
+        tasks = load(file)
+    return tasks
+
 
 if __name__ == "__main__":
     file_path = Path("tasks.json")
     if not file_path.is_file():
-        with open(file_path, "w", encoding="utf-8") as file:
-            dump([], file)
-
-    with open(file_path, "r", encoding="utf-8") as file:
-        tasks = load(file)
+        write_to_json_file(file_path, [])
+    tasks = load_json_file(file_path)
 
     ARG_COUNT = len(argv)-1
     if ARG_COUNT < 1 or ARG_COUNT > 3:
@@ -73,8 +77,7 @@ if __name__ == "__main__":
                 if x["id"] == task_number:
                     x["description"] = task_description
                     x["updatedAt"] = datetime.now().isoformat()
-                    with open(file_path, "w", encoding="utf-8") as file:
-                        dump(tasks, file, indent=4)
+                    write_to_json_file(file_path, tasks)
                     break
             list_tasks(tasks)
         else:
@@ -82,17 +85,15 @@ if __name__ == "__main__":
                 for x in tasks:
                     if x["id"] == task_number:
                         tasks.remove(x)
+                        write_to_json_file(file_path, tasks)
                         break
-                with open(file_path, "w", encoding="utf-8") as file:
-                    dump(tasks, file, indent=4)
                 list_tasks(tasks)
             elif CMD == "mark-in-progress":
                 for x in tasks:
                     if x["id"] == task_number:
                         x["status"] = "in-progress"
                         x["updatedAt"] = datetime.now().isoformat()
-                        with open(file_path, "w", encoding="utf-8") as file:
-                            dump(tasks, file, indent=4)
+                        write_to_json_file(file_path, tasks)
                         break
                 list_tasks(tasks)
             elif CMD == "mark-done":
@@ -100,8 +101,7 @@ if __name__ == "__main__":
                     if x["id"] == task_number:
                         x["status"] = "done"
                         x["updatedAt"] = datetime.now().isoformat()
-                        with open(file_path, "w", encoding="utf-8") as file:
-                            dump(tasks, file, indent=4)
+                        write_to_json_file(file_path, tasks)
                         break
                 list_tasks(tasks)
             else:
@@ -113,8 +113,7 @@ if __name__ == "__main__":
         task_id = next_id(tasks)
         new_task = Task(id=task_id, description=task_description).to_json()
         tasks.append(new_task)
-        with open(file_path, "w", encoding="utf-8") as file:
-            dump(tasks, file, indent=4)
+        write_to_json_file(file_path, tasks)
         list_tasks(tasks)
     elif CMD == "list":
         if ARG_COUNT == 2:
