@@ -44,6 +44,35 @@ def load_json_file(file_path):
         tasks = load(file)
     return tasks
 
+def exec_command(command, tasks, task_number, file_path, task_description=""):
+    if command != "add" and command != "list":
+        for x in tasks:
+            if x["id"] == task_number:
+                if command == "update":
+                    x["description"] = task_description
+                    x["updatedAt"] = datetime.now().isoformat()
+                    write_to_json_file(file_path, tasks)
+                    break
+                elif command == "delete":
+                    tasks.remove(x)
+                    write_to_json_file(file_path, tasks)
+                    break
+                elif command == "mark-in-progress":
+                    x["status"] = "in-progress"
+                    x["updatedAt"] = datetime.now().isoformat()
+                    write_to_json_file(file_path, tasks)
+                    break
+                elif command == "mark-done":
+                    x["status"] = "done"
+                    x["updatedAt"] = datetime.now().isoformat()
+                    write_to_json_file(file_path, tasks)
+                    break
+    else:
+        new_task = Task(id=task_number, description=task_description).to_json()
+        tasks.append(new_task)
+        write_to_json_file(file_path, tasks)
+    list_tasks(tasks)
+
 
 if __name__ == "__main__":
     file_path = Path("tasks.json")
@@ -73,48 +102,15 @@ if __name__ == "__main__":
             if ARG_COUNT != 3:
                 exit(USAGE)         
             task_description = argv[3]
-            for x in tasks:
-                if x["id"] == task_number:
-                    x["description"] = task_description
-                    x["updatedAt"] = datetime.now().isoformat()
-                    write_to_json_file(file_path, tasks)
-                    break
-            list_tasks(tasks)
+            exec_command(CMD, tasks, task_number, file_path, task_description)
         else:
-            if CMD == "delete":
-                for x in tasks:
-                    if x["id"] == task_number:
-                        tasks.remove(x)
-                        write_to_json_file(file_path, tasks)
-                        break
-                list_tasks(tasks)
-            elif CMD == "mark-in-progress":
-                for x in tasks:
-                    if x["id"] == task_number:
-                        x["status"] = "in-progress"
-                        x["updatedAt"] = datetime.now().isoformat()
-                        write_to_json_file(file_path, tasks)
-                        break
-                list_tasks(tasks)
-            elif CMD == "mark-done":
-                for x in tasks:
-                    if x["id"] == task_number:
-                        x["status"] = "done"
-                        x["updatedAt"] = datetime.now().isoformat()
-                        write_to_json_file(file_path, tasks)
-                        break
-                list_tasks(tasks)
-            else:
-                exit(USAGE)
+            exec_command(CMD, tasks, task_number, file_path)   
     elif CMD == "add":
         if ARG_COUNT != 2:
             exit(USAGE)
         task_description = f"{argv[2]}"
         task_id = next_id(tasks)
-        new_task = Task(id=task_id, description=task_description).to_json()
-        tasks.append(new_task)
-        write_to_json_file(file_path, tasks)
-        list_tasks(tasks)
+        exec_command("add", tasks, task_id, file_path, task_description)
     elif CMD == "list":
         if ARG_COUNT == 2:
             task_status = argv[2]
