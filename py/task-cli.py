@@ -2,7 +2,7 @@ from sys import argv, exit
 from datetime import datetime
 
 COMMANDS = ["add", "update", "delete", "mark-in-progress", "mark-done", "list"]
-STATUS = ["in-progress", "done"]
+STATUS = ["todo", "in-progress", "done"]
 
 # tasks = []
 timestamp_1 = datetime.now().isoformat()
@@ -30,6 +30,13 @@ def next_id(tasks):
     ids = [x["id"] for x in tasks]
     last_id = max(ids)
     return last_id + 1
+
+def in_tasks(task_id, tasks):
+    existing_ids = [x["id"] for x in tasks]
+    if not task_id in existing_ids:
+        return False
+    return True
+
 
 if __name__ == "__main__":
     arg_count = len(argv)-1
@@ -66,11 +73,9 @@ if __name__ == "__main__":
             exit("enter a number for the ID")
         if int(task_id) < 1:
             exit("task IDs cannot be less than 1")
-        task_count = len(tasks)
-        if task_count < 1:
-            exit("there are no tasks to update")
-        if int(task_id) > task_count:
-            exit("that task ID does not exist in your tasks")
+        if not in_tasks(int(task_id), tasks):
+            exit("task ID does not exist in the task list")
+
         task_description = argv[3]
         if len(task_description) < 1:
             exit("add a task description when updating a task")
@@ -91,11 +96,8 @@ if __name__ == "__main__":
             exit("enter a number for the ID")
         if int(task_id) < 1:
             exit("task IDs cannot be less than 1")
-        task_count = len(tasks)
-        if task_count < 1:
-            exit("there are no tasks to delete")
-        if int(task_id) > task_count:
-            exit("that task ID does not exist in your tasks")
+        if not in_tasks(int(task_id), tasks):
+            exit("task ID does not exist in the task list")
 
         for x in tasks:
             if x["id"] == int(task_id):
@@ -111,11 +113,8 @@ if __name__ == "__main__":
             exit("enter a number for the ID")
         if int(task_id) < 1:
             exit("task IDs cannot be less than 1")
-        task_count = len(tasks)
-        if task_count < 1:
-            exit("there are no tasks to mark in-progress or done")
-        if int(task_id) > task_count:
-            exit("that task ID does not exist in your tasks")
+        if not in_tasks(int(task_id), tasks):
+            exit("task ID does not exist in the task list")
 
         for x in tasks:
             if x["id"] == int(task_id):
