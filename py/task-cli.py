@@ -1,8 +1,35 @@
 from sys import argv, exit
+from datetime import datetime
 
 COMMANDS = ["add", "update", "delete", "mark-in-progress", "mark-done", "list"]
+STATUS = ["in-progress", "done"]
 
-tasks = ["a"]
+# tasks = []
+timestamp_1 = datetime.now().isoformat()
+timestamp_2 = datetime.now().isoformat()
+tasks = [
+    {
+        "id": 1,
+        "description": "drink water",
+        "status": "in-progress",
+        "createdAt": timestamp_1,
+        "updatedAt": timestamp_1
+    },
+    {
+        "id": 2,
+        "description": "drink coke",
+        "status": "todo",
+        "createdAt": timestamp_2,
+        "updatedAt": timestamp_2
+    }
+]
+
+def next_id(tasks):
+    if not tasks:
+        return 1
+    ids = [x["id"] for x in tasks]
+    last_id = max(ids)
+    return last_id + 1
 
 if __name__ == "__main__":
     arg_count = len(argv)-1
@@ -14,11 +41,22 @@ if __name__ == "__main__":
         exit("first argument must be a command")
 
     if command == "add":
-        if arg_count != 3:
+        if arg_count != 2:
             exit("add a task description when adding a task")
         task_description = argv[2]
         if len(task_description) < 1:
             exit("add a task description when adding a task")
+
+        timestamp = datetime.now().isoformat()
+        new_task = {
+            "id": next_id(tasks),
+            "description": task_description,
+            "status": "todo",
+            "createdAt": timestamp,
+            "updatedAt": timestamp
+        }
+        tasks.append(new_task)
+        print(tasks)
 
     if command == "update":
         if arg_count != 3:
@@ -26,19 +64,28 @@ if __name__ == "__main__":
         task_id = argv[2]
         if not task_id.isdigit():
             exit("enter a number for the ID")
+        if int(task_id) < 1:
+            exit("task IDs cannot be less than 1")
         task_count = len(tasks)
         if task_count < 1:
             exit("there are no tasks to update")
         if int(task_id) > task_count:
             exit("that task ID does not exist in your tasks")
-
         task_description = argv[3]
         if len(task_description) < 1:
             exit("add a task description when updating a task")
 
-    if command == "delete" or command == "mark-in-progress" or command == "mark-done":
+        for x in tasks:
+            if x["id"] == int(task_id):
+                timestamp = datetime.now().isoformat()
+                x["description"] = task_description
+                x["updatedAt"] = timestamp
+                break
+        print(tasks)
+
+    if command == "delete":
         if arg_count != 2:
-            exit("enter a task ID to delete, mark in-progress, or mark done")
+            exit("enter a task ID to delete")
         task_id = argv[2]
         if not task_id.isdigit():
             exit("enter a number for the ID")
@@ -46,9 +93,40 @@ if __name__ == "__main__":
             exit("task IDs cannot be less than 1")
         task_count = len(tasks)
         if task_count < 1:
-            exit("there are no tasks to delete, mark in-progress, or mark done")
+            exit("there are no tasks to delete")
         if int(task_id) > task_count:
             exit("that task ID does not exist in your tasks")
+
+        for x in tasks:
+            if x["id"] == int(task_id):
+                tasks.remove(x)
+                break
+        print(tasks)
+
+    if command == "mark-in-progress" or command == "mark-done":
+        if arg_count != 2:
+            exit("enter a task ID to mark in-progress or done")
+        task_id = argv[2]
+        if not task_id.isdigit():
+            exit("enter a number for the ID")
+        if int(task_id) < 1:
+            exit("task IDs cannot be less than 1")
+        task_count = len(tasks)
+        if task_count < 1:
+            exit("there are no tasks to mark in-progress or done")
+        if int(task_id) > task_count:
+            exit("that task ID does not exist in your tasks")
+
+        for x in tasks:
+            if x["id"] == int(task_id):
+                timestamp = datetime.now().isoformat()
+                if command == "mark-in-progress":
+                    x["status"] = "in-progress"
+                else:
+                    x["status"] = "done"
+                x["updatedAt"] = timestamp
+                break
+        print(tasks)
 
     if command == "list":
         if arg_count < 1 or arg_count > 2:
@@ -56,6 +134,8 @@ if __name__ == "__main__":
         if arg_count == 1:
             print(tasks)
         else:
-            for x in tasks:
-                print(x)
-
+            status = argv[2]
+            if not status in STATUS:
+                exit("that is not a valid status")
+            filtered_tasks = [x for x in tasks if x["status"] == status]
+            print(filtered_tasks)
