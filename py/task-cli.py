@@ -1,28 +1,13 @@
 from sys import argv, exit
 from datetime import datetime
+from json import load, dump
+from pathlib import Path
+
 
 COMMANDS = ["add", "update", "delete", "mark-in-progress", "mark-done", "list"]
 STATUS = ["todo", "in-progress", "done"]
 
-# tasks = []
-timestamp_1 = datetime.now().isoformat()
-timestamp_2 = datetime.now().isoformat()
-tasks = [
-    {
-        "id": 1,
-        "description": "drink water",
-        "status": "in-progress",
-        "createdAt": timestamp_1,
-        "updatedAt": timestamp_1
-    },
-    {
-        "id": 2,
-        "description": "drink coke",
-        "status": "todo",
-        "createdAt": timestamp_2,
-        "updatedAt": timestamp_2
-    }
-]
+tasks = []
 
 def next_id(tasks):
     if not tasks:
@@ -37,8 +22,25 @@ def in_tasks(task_id, tasks):
         return False
     return True
 
+def save_json_file(filepath, data):
+    with open(filepath, "w", encoding="utf-8") as file:
+        dump(data, file, indent=4)
+
+def load_json_file(file_path):
+    with open(file_path, "r", encoding="utf-8") as file:
+        tasks = load(file)
+    return tasks
+
+def print_tasks(tasks):
+    for x in tasks:
+        print(x)
 
 if __name__ == "__main__":
+    filepath = Path("tasks.json")
+    if not filepath.is_file():
+        save_json_file(filepath, [])
+    tasks = load_json_file(filepath)
+    
     arg_count = len(argv)-1
     if arg_count < 1 or arg_count > 3:
         exit("wrong number of program arguments")
@@ -63,7 +65,7 @@ if __name__ == "__main__":
             "updatedAt": timestamp
         }
         tasks.append(new_task)
-        print(tasks)
+        print_tasks(tasks)
 
     if command == "update":
         if arg_count != 3:
@@ -86,7 +88,7 @@ if __name__ == "__main__":
                 x["description"] = task_description
                 x["updatedAt"] = timestamp
                 break
-        print(tasks)
+        print_tasks(tasks)
 
     if command == "delete":
         if arg_count != 2:
@@ -103,7 +105,7 @@ if __name__ == "__main__":
             if x["id"] == int(task_id):
                 tasks.remove(x)
                 break
-        print(tasks)
+        print_tasks(tasks)
 
     if command == "mark-in-progress" or command == "mark-done":
         if arg_count != 2:
@@ -125,16 +127,19 @@ if __name__ == "__main__":
                     x["status"] = "done"
                 x["updatedAt"] = timestamp
                 break
-        print(tasks)
+        print_tasks(tasks)
 
     if command == "list":
         if arg_count < 1 or arg_count > 2:
             exit("list can be entered on its own or be followed by a status")
         if arg_count == 1:
-            print(tasks)
+            print_tasks(tasks)
         else:
             status = argv[2]
             if not status in STATUS:
                 exit("that is not a valid status")
             filtered_tasks = [x for x in tasks if x["status"] == status]
-            print(filtered_tasks)
+            print_tasks(filtered_tasks)
+
+    if command != "list":
+        save_json_file(filepath, tasks)
