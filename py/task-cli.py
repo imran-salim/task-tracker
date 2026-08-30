@@ -26,8 +26,8 @@ def save_json_file(filepath, data):
     with open(filepath, "w", encoding="utf-8") as file:
         dump(data, file, indent=4)
 
-def load_json_file(file_path):
-    with open(file_path, "r", encoding="utf-8") as file:
+def load_json_file(filepath):
+    with open(filepath, "r", encoding="utf-8") as file:
         tasks = load(file)
     return tasks
 
