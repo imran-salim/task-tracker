@@ -1,64 +1,54 @@
 # Task Tracker
 
-A command line task tracker, implemented twice: once in JavaScript (Node.js) and once in Python.
+A command-line task tracker implemented in Python as a solution to the [roadmap.sh Task Tracker project](https://roadmap.sh/projects/task-tracker).
 
-A solution to the [roadmap.sh Task Tracker project](https://roadmap.sh/projects/task-tracker).
+The working implementation is in `py/task-cli.py`. It uses only the Python standard library and stores tasks in a local `tasks.json` file.
 
-Both implementations support the same commands:
+## Requirements
+
+- Python 3
+- No third-party packages
+
+## Usage
+
+Run the application from the `py` directory so that `tasks.json` is created and read there:
+
+```sh
+cd py
+python3 task-cli.py add "Buy groceries"
+```
+
+The following commands are available:
 
 | Command | Description |
 | --- | --- |
-| `add <description>` | Add a new task |
+| `add <description>` | Add a task with a `todo` status |
 | `update <id> <description>` | Change a task's description |
-| `delete <id>` | Remove a task |
+| `delete <id>` | Delete a task |
 | `mark-in-progress <id>` | Mark a task as in progress |
 | `mark-done <id>` | Mark a task as done |
-| `list [status]` | List tasks, optionally filtered by `todo`, `in-progress` or `done` |
+| `list` | List all tasks |
+| `list <status>` | List tasks filtered by `todo`, `in-progress`, or `done` |
 
-## JavaScript (`js/`)
+Examples:
 
-Tasks are persisted to a `tasks.json` file in the working directory, which is created automatically on first run. Each task has a UUID, a description, a status and created/updated timestamps. `update`, `delete` and the `mark-*` commands take the task's position in the list (starting at 1).
-
-Requires Node.js. Run it from the `js` directory:
-
-```
-node app.js add "Buy groceries"
-node app.js update 1 "Buy groceries and milk"
-node app.js mark-in-progress 1
-node app.js mark-done 1
-node app.js delete 1
-node app.js list
-node app.js list done
+```sh
+python3 task-cli.py add "Buy groceries"
+python3 task-cli.py update 1 "Buy groceries and milk"
+python3 task-cli.py mark-in-progress 1
+python3 task-cli.py mark-done 1
+python3 task-cli.py list
+python3 task-cli.py list done
+python3 task-cli.py delete 1
 ```
 
-### Tests
+Each task has an integer ID, description, status, creation timestamp, and update timestamp. IDs are assigned by incrementing the highest existing ID and are not reused while higher-numbered tasks remain. Any command that changes the task list saves the result to `tasks.json`.
 
-Unit tests are written with Jest, one file per command in `js/tests/`. From the `js` directory:
+## JavaScript Version
 
-```
-npm install
-npm test
-```
+The `js` directory contains an earlier, unfinished implementation and is not the supported version of the project. It is not currently reliable because several argument-validation conditions use mutually exclusive checks joined with `&&`, so invalid argument counts and out-of-range task numbers are not rejected. Unrecognised actions can also exit without an error, and the Jest files test duplicated file-manipulation logic rather than invoking the command-line application itself.
 
-## Python (`py/`)
-
-Tasks are persisted to a `tasks.json` file in the working directory, which is created automatically on first run. Each task has an integer id, a description, a status and created/updated timestamps. `update`, `delete` and the `mark-*` commands take the task's id.
-
-Requires Python 3. Run it from the `py` directory:
-
-```
-python task-cli.py add "Buy groceries"
-python task-cli.py update 1 "Buy groceries and milk"
-python task-cli.py mark-in-progress 1
-python task-cli.py mark-done 1
-python task-cli.py delete 1
-python task-cli.py list
-python task-cli.py list done
-```
-
-Ids are never reused, so deleting a task leaves a gap in the numbering.
-
-Next: replace the JSON file with a SQLite database.
+Development therefore moved to the Python implementation, which provides the complete command set and consistent ID-based task handling. The JavaScript code remains in the repository for reference.
 
 ## License
 
