@@ -35,6 +35,16 @@ def print_tasks(tasks):
     for x in tasks:
         print(x)
 
+def validate_task_id(task_id, tasks):
+    if not task_id.isdigit():
+        exit("enter a number for the ID")
+    if int(task_id) < 1:
+        exit("task IDs cannot be less than 1")
+    if not in_tasks(int(task_id), tasks):
+        exit("task ID does not exist in the task list")
+    return task_id
+    
+
 if __name__ == "__main__":
     filepath = Path("tasks.json")
     if not filepath.is_file():
@@ -70,14 +80,7 @@ if __name__ == "__main__":
     if command == "update":
         if arg_count != 3:
             exit("add a task ID followed by a new description to update a task")
-        task_id = argv[2]
-        if not task_id.isdigit():
-            exit("enter a number for the ID")
-        if int(task_id) < 1:
-            exit("task IDs cannot be less than 1")
-        if not in_tasks(int(task_id), tasks):
-            exit("task ID does not exist in the task list")
-
+        task_id = validate_task_id(argv[2], tasks)
         task_description = argv[3]
         if len(task_description) < 1:
             exit("add a task description when updating a task")
@@ -93,14 +96,8 @@ if __name__ == "__main__":
     if command == "delete":
         if arg_count != 2:
             exit("enter a task ID to delete")
-        task_id = argv[2]
-        if not task_id.isdigit():
-            exit("enter a number for the ID")
-        if int(task_id) < 1:
-            exit("task IDs cannot be less than 1")
-        if not in_tasks(int(task_id), tasks):
-            exit("task ID does not exist in the task list")
 
+        task_id = validate_task_id(argv[2], tasks)
         for x in tasks:
             if x["id"] == int(task_id):
                 tasks.remove(x)
@@ -110,14 +107,8 @@ if __name__ == "__main__":
     if command == "mark-in-progress" or command == "mark-done":
         if arg_count != 2:
             exit("enter a task ID to mark in-progress or done")
-        task_id = argv[2]
-        if not task_id.isdigit():
-            exit("enter a number for the ID")
-        if int(task_id) < 1:
-            exit("task IDs cannot be less than 1")
-        if not in_tasks(int(task_id), tasks):
-            exit("task ID does not exist in the task list")
 
+        task_id = validate_task_id(argv[2], tasks)
         for x in tasks:
             if x["id"] == int(task_id):
                 timestamp = datetime.now().isoformat()
@@ -132,6 +123,7 @@ if __name__ == "__main__":
     if command == "list":
         if arg_count < 1 or arg_count > 2:
             exit("list can be entered on its own or be followed by a status")
+            
         if arg_count == 1:
             print_tasks(tasks)
         else:
