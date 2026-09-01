@@ -16,12 +16,6 @@ def next_id(tasks):
     last_id = max(ids)
     return last_id + 1
 
-def in_tasks(task_id, tasks):
-    existing_ids = [x["id"] for x in tasks]
-    if not task_id in existing_ids:
-        return False
-    return True
-
 def save_json_file(filepath, data):
     with open(filepath, "w", encoding="utf-8") as file:
         dump(data, file, indent=4)
@@ -43,6 +37,12 @@ def validate_task_id(task_id, tasks):
     if not in_tasks(int(task_id), tasks):
         exit("task ID does not exist in the task list")
     return task_id
+    
+def in_tasks(task_id, tasks):
+    existing_ids = [x["id"] for x in tasks]
+    if not task_id in existing_ids:
+        return False
+    return True
     
 
 if __name__ == "__main__":
