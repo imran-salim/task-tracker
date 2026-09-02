@@ -43,7 +43,12 @@ def in_tasks(task_id, tasks):
     if not task_id in existing_ids:
         return False
     return True
-    
+
+def validate_task_description(description):
+    if len(description) < 1:
+        exit("task description cannot be empty")
+    return description
+
 
 if __name__ == "__main__":
     filepath = Path("tasks.json")
@@ -62,9 +67,7 @@ if __name__ == "__main__":
     if command == "add":
         if arg_count != 2:
             exit("add a task description when adding a task")
-        task_description = argv[2]
-        if len(task_description) < 1:
-            exit("add a task description when adding a task")
+        task_description = validate_task_description(argv[2])
 
         timestamp = datetime.now().isoformat()
         new_task = {
@@ -81,9 +84,7 @@ if __name__ == "__main__":
         if arg_count != 3:
             exit("add a task ID followed by a new description to update a task")
         task_id = validate_task_id(argv[2], tasks)
-        task_description = argv[3]
-        if len(task_description) < 1:
-            exit("add a task description when updating a task")
+        task_description = validate_task_description(argv[3])
 
         for x in tasks:
             if x["id"] == int(task_id):
