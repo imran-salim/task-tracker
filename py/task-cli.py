@@ -9,13 +9,6 @@ STATUS = ["todo", "in-progress", "done"]
 
 tasks = []
 
-def next_id(tasks):
-    if not tasks:
-        return 1
-    ids = [x["id"] for x in tasks]
-    last_id = max(ids)
-    return last_id + 1
-
 def save_json_file(filepath, data):
     with open(filepath, "w", encoding="utf-8") as file:
         dump(data, file, indent=4)
@@ -37,7 +30,6 @@ def validate_task_id(task_id, tasks):
     if not in_tasks(int(task_id), tasks):
         exit("task ID does not exist in the task list")
     return task_id
-    
 def in_tasks(task_id, tasks):
     existing_ids = [x["id"] for x in tasks]
     if not task_id in existing_ids:
@@ -48,6 +40,22 @@ def validate_task_description(description):
     if len(description) < 1:
         exit("task description cannot be empty")
     return description
+
+def create_new_task(task_description, tasks):
+    timestamp = datetime.now().isoformat()
+    return {
+        "id": next_id(tasks),
+        "description": task_description,
+        "status": "todo",
+        "createdAt": timestamp,
+        "updatedAt": timestamp
+    }
+def next_id(tasks):
+    if not tasks:
+        return 1
+    ids = [x["id"] for x in tasks]
+    last_id = max(ids)
+    return last_id + 1
 
 
 if __name__ == "__main__":
@@ -68,15 +76,7 @@ if __name__ == "__main__":
         if arg_count != 2:
             exit("add a task description when adding a task")
         task_description = validate_task_description(argv[2])
-
-        timestamp = datetime.now().isoformat()
-        new_task = {
-            "id": next_id(tasks),
-            "description": task_description,
-            "status": "todo",
-            "createdAt": timestamp,
-            "updatedAt": timestamp
-        }
+        new_task = create_new_task(task_description, tasks)
         tasks.append(new_task)
         print_tasks(tasks)
 
@@ -85,7 +85,6 @@ if __name__ == "__main__":
             exit("add a task ID followed by a new description to update a task")
         task_id = validate_task_id(argv[2], tasks)
         task_description = validate_task_description(argv[3])
-
         for x in tasks:
             if x["id"] == int(task_id):
                 timestamp = datetime.now().isoformat()
@@ -97,7 +96,6 @@ if __name__ == "__main__":
     if command == "delete":
         if arg_count != 2:
             exit("enter a task ID to delete")
-
         task_id = validate_task_id(argv[2], tasks)
         for x in tasks:
             if x["id"] == int(task_id):
@@ -108,7 +106,6 @@ if __name__ == "__main__":
     if command == "mark-in-progress" or command == "mark-done":
         if arg_count != 2:
             exit("enter a task ID to mark in-progress or done")
-
         task_id = validate_task_id(argv[2], tasks)
         for x in tasks:
             if x["id"] == int(task_id):
@@ -123,8 +120,7 @@ if __name__ == "__main__":
 
     if command == "list":
         if arg_count > 2:
-            exit("list can be entered on its own or be followed by a status")
-            
+            exit("list can be entered on its own or be followed by a status")   
         if arg_count == 1:
             print_tasks(tasks)
         else:
