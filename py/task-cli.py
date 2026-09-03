@@ -22,6 +22,12 @@ def print_tasks(tasks):
     for x in tasks:
         print(x)
 
+def in_tasks(task_id, tasks):
+    existing_ids = [x["id"] for x in tasks]
+    if not task_id in existing_ids:
+        return False
+    return True
+
 def validate_task_id(task_id, tasks):
     if not task_id.isdigit():
         exit("enter a number for the ID")
@@ -30,16 +36,18 @@ def validate_task_id(task_id, tasks):
     if not in_tasks(int(task_id), tasks):
         exit("task ID does not exist in the task list")
     return task_id
-def in_tasks(task_id, tasks):
-    existing_ids = [x["id"] for x in tasks]
-    if not task_id in existing_ids:
-        return False
-    return True
 
 def validate_task_description(description):
     if len(description) < 1:
         exit("task description cannot be empty")
     return description
+
+def next_id(tasks):
+    if not tasks:
+        return 1
+    ids = [x["id"] for x in tasks]
+    last_id = max(ids)
+    return last_id + 1
 
 def create_new_task(task_description, tasks):
     timestamp = datetime.now().isoformat()
@@ -50,12 +58,6 @@ def create_new_task(task_description, tasks):
         "createdAt": timestamp,
         "updatedAt": timestamp
     }
-def next_id(tasks):
-    if not tasks:
-        return 1
-    ids = [x["id"] for x in tasks]
-    last_id = max(ids)
-    return last_id + 1
 
 
 if __name__ == "__main__":
