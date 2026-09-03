@@ -122,7 +122,7 @@ if __name__ == "__main__":
         print_tasks(tasks)
 
     if command == "list":
-        if arg_count < 1 or arg_count > 2:
+        if arg_count > 2:
             exit("list can be entered on its own or be followed by a status")
             
         if arg_count == 1:
