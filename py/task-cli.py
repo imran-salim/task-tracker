@@ -37,10 +37,10 @@ def validate_task_id(task_id, tasks):
         exit("task ID does not exist in the task list")
     return task_id
 
-def validate_task_description(description):
-    if len(description) < 1:
+def validate_task_description(task_description):
+    if len(task_description) < 1:
         exit("task description cannot be empty")
-    return description
+    return task_description
 
 def next_id(tasks):
     if not tasks:
