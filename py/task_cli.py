@@ -4,17 +4,18 @@ from json import load, dump
 from pathlib import Path
 
 
+FILEPATH = Path("tasks.json")
 COMMANDS = ["add", "update", "delete", "mark-in-progress", "mark-done", "list"]
 STATUS = ["todo", "in-progress", "done"]
 
 tasks = []
 
-def save_json_file(filepath, data):
-    with open(filepath, "w", encoding="utf-8") as file:
+def save_json_file(FILEPATH, data):
+    with open(FILEPATH, "w", encoding="utf-8") as file:
         dump(data, file, indent=4)
 
-def load_json_file(filepath):
-    with open(filepath, "r", encoding="utf-8") as file:
+def load_json_file(FILEPATH):
+    with open(FILEPATH, "r", encoding="utf-8") as file:
         tasks = load(file)
     return tasks
 
@@ -59,20 +60,29 @@ def create_new_task(task_description, tasks):
         "updatedAt": timestamp
     }
 
+def valid_num_of_args(arg_count):
+    if arg_count < 1 or arg_count > 3:
+        return False
+    return True
+
+def valid_first_arg(command):
+    if not command in COMMANDS:
+        return False
+    return True
+    
 
 if __name__ == "__main__":
-    filepath = Path("tasks.json")
-    if not filepath.is_file():
-        save_json_file(filepath, [])
-    tasks = load_json_file(filepath)
-    
+    if not FILEPATH.is_file():
+        save_json_file(FILEPATH, [])
+    tasks = load_json_file(FILEPATH)
+
     arg_count = len(argv)-1
-    if arg_count < 1 or arg_count > 3:
+    if not valid_num_of_args(arg_count):
         exit("wrong number of program arguments")
 
-    command = argv[1]
-    if not command in COMMANDS:
+    if not valid_first_arg(argv[1]):
         exit("first argument must be a command")
+    command = argv[1]
 
     if command == "add":
         if arg_count != 2:
@@ -133,4 +143,4 @@ if __name__ == "__main__":
             print_tasks(filtered_tasks)
 
     if command != "list":
-        save_json_file(filepath, tasks)
+        save_json_file(FILEPATH, tasks)

@@ -2,7 +2,7 @@
 
 A command-line task tracker implemented in Python as a solution to the [roadmap.sh Task Tracker project](https://roadmap.sh/projects/task-tracker).
 
-The working implementation is in `py/task-cli.py`. It uses only the Python standard library and stores tasks in a local `tasks.json` file.
+The working implementation is in `py/task_cli.py`. It uses only the Python standard library and stores tasks in a local `tasks.json` file.
 
 ## Requirements
 
@@ -15,7 +15,7 @@ Run the application from the `py` directory so that `tasks.json` is created and 
 
 ```sh
 cd py
-python3 task-cli.py add "Buy groceries"
+python3 task_cli.py add "Buy groceries"
 ```
 
 The following commands are available:
@@ -33,13 +33,13 @@ The following commands are available:
 Examples:
 
 ```sh
-python3 task-cli.py add "Buy groceries"
-python3 task-cli.py update 1 "Buy groceries and milk"
-python3 task-cli.py mark-in-progress 1
-python3 task-cli.py mark-done 1
-python3 task-cli.py list
-python3 task-cli.py list done
-python3 task-cli.py delete 1
+python3 task_cli.py add "Buy groceries"
+python3 task_cli.py update 1 "Buy groceries and milk"
+python3 task_cli.py mark-in-progress 1
+python3 task_cli.py mark-done 1
+python3 task_cli.py list
+python3 task_cli.py list done
+python3 task_cli.py delete 1
 ```
 
 Each task has an integer ID, description, status, creation timestamp, and update timestamp. IDs are assigned by incrementing the highest existing ID and are not reused while higher-numbered tasks remain. Any command that changes the task list saves the result to `tasks.json`.
