@@ -8,8 +8,6 @@ FILEPATH = Path("tasks.json")
 COMMANDS = ["add", "update", "delete", "mark-in-progress", "mark-done", "list"]
 STATUS = ["todo", "in-progress", "done"]
 
-tasks = []
-
 def save_json_file(FILEPATH, data):
     with open(FILEPATH, "w", encoding="utf-8") as file:
         dump(data, file, indent=4)
